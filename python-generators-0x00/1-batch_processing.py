@@ -23,6 +23,7 @@ def batch_processing(batch_size):
             filtered_users = filter(lambda user: user['age'] > 25, batch)
             for user in filtered_users:
                 print(user)
+                return user
             
     except Exception as e:
         print(f"Error: {e}")
