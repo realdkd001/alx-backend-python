@@ -74,7 +74,7 @@ def create_table(connection):
                 user_id CHAR(36) PRIMARY KEY,
                 name VARCHAR(150) NOT NULL,
                 email VARCHAR(200) NOT NULL,
-                age DECIMAL NOT NULL
+                age INT NOT NULL
             )
         ''')
         cursor.execute('''
