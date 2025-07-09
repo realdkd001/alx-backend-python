@@ -9,8 +9,10 @@ def log_queries(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         query = args[0] if args else kwargs.get('query',"")
+        query_to_log = f"[{datetime.now()}] Query: {query}\n"
         with open("query.log", "a") as file:
-            file.write(f"[{datetime.now()}] Query: {query}\n")
+            file.write(query_to_log)
+        print(query_to_log)
         return func(*args, **kwargs)
     return wrapper
         
