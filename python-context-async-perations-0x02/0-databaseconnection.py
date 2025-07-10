@@ -18,5 +18,4 @@ class DatabaseConnection:
 with DatabaseConnection("users.db") as cnx:
     cursor = cnx.cursor()
     cursor.execute("SELECT * FROM users")
-    cnx.commit()
     print(cursor.fetchall())
