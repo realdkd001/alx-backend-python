@@ -17,12 +17,5 @@ class DatabaseConnection:
 
 with DatabaseConnection("users.db") as cnx:
     cursor = cnx.cursor()
+    cursor.execute("SELECT * FROM users")
     
-    cursor.execute('''
-                   CREATE TABLE IF NOT EXISTS users(
-                       id INTEGER PRIMARY KEY,
-                       name TEXT,
-                       email TEXT,
-                       age INTEGER)''')
-    cursor.execute("INSERT INTO users (name, email, age ) VALUES (?, ?, ?)", ("Daniel", "dkd@gmail.com", 20))
-    cnx.commit()
