@@ -44,9 +44,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest-framework',
+    'rest_framework',
     'chats'
 ]
+
+AUTH_USER_MODEL = 'chats.User'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
