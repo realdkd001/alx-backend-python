@@ -20,16 +20,12 @@ class UserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Phone number must contain only digits.")
         return value
 
-            
-  
-
 class MessageSerializer(serializers.ModelSerializer):
     sender = UserSerializer(read_only=True)
     sender_email = serializers.SerializerMethodField()
     sender_full_name = serializers.SerializerMethodField()
     sender_contact = serializers.SerializerMethodField()
     message_body = serializers.CharField(required=True)
-    sent_at = serializers.DateTimeField()
 
     class Meta:
         model = Message
