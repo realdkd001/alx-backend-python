@@ -34,6 +34,9 @@ DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = []
 
+LOGIN_REDIRECT_URL = '/api/'
+
+
 
 # Application definition
 
