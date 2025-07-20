@@ -39,7 +39,7 @@ class TestGetJson(unittest.TestCase):
         self.assertEqual(res, test_payload)
         
         
-class TestMomoize(unittest.TestCase):
+class TestMemoize(unittest.TestCase):
     
     
     def test_momoize(self):
