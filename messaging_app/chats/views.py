@@ -1,6 +1,6 @@
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsParticipantOfConversation
 from rest_framework import viewsets, filters, status
+from .permissions import IsOwner
 from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
 
@@ -13,7 +13,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter]
     search_fields = ['participants__username']
     
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsParticipantOfConversation]
 
 
 class MessageViewSet(viewsets.ModelViewSet):
@@ -25,4 +25,4 @@ class MessageViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(sender=self.request.user)
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsParticipantOfConversation]
