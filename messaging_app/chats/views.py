@@ -1,3 +1,5 @@
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets, filters, status
 from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
@@ -10,6 +12,8 @@ class ConversationViewSet(viewsets.ModelViewSet):
     serializer_class = ConversationSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['participants__username']
+    
+    permission_classes = [IsAuthenticated]
 
 
 class MessageViewSet(viewsets.ModelViewSet):
@@ -21,3 +25,4 @@ class MessageViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(sender=self.request.user)
+    permission_classes = [IsAuthenticated]
