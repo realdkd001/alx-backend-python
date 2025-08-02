@@ -53,7 +53,7 @@ MIDDLEWARE = [
 
 AUTH_USER_MODEL = 'messaging.User'
 
-ROOT_URLCONF = 'messaging_app.urls'
+ROOT_URLCONF = 'Django-signals_orm-0x04.urls'
 
 TEMPLATES = [
     {
@@ -70,7 +70,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'messaging_app.wsgi.application'
+WSGI_APPLICATION = 'Django-signals_orm-0x04.wsgi.application'
 
 
 # Database

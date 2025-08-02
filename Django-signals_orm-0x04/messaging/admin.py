@@ -4,3 +4,4 @@ from . import models
 admin.site.register(models.User)
 admin.site.register(models.Message)
 admin.site.register(models.Notification)
+admin.site.register(models.MessageHistory)
