@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.decorators import login_required
 from django.db import models
 import uuid
-
 
 class User(AbstractUser):
     user_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
