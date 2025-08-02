@@ -1,15 +1,20 @@
 from rest_framework.permissions import IsAuthenticated
-from .permission import IsOwnerOrAdmin
 from rest_framework import viewsets
-from .models import Message, User
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import MessageSerializer
+from .models import Message
 
-from .serializers import MessageSerializer, UserSerializer
 
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated, IsOwnerOrAdmin]
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_user(request):
+    user = request.user
+    user.delete()
+    return Response({"message": "User account deleted successfully."}, status=status.HTTP_204_NO_CONTENT)

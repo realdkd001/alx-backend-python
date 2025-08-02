@@ -26,3 +26,4 @@ def log_message_edit(sender, instance, **kwargs):
 @receiver(post_delete, sender=User)
 def post_delete_user(sender, instance, **kwargs):
     MessageHistory.objects.filter(edited_by=instance).delete()
+    Message.objects.filter(sender=instance).delete()
