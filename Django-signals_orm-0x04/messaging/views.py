@@ -8,8 +8,14 @@ from .models import Message
 
 
 class MessageViewSet(viewsets.ModelViewSet):
-    queryset = Message.objects.all()
+    queryset = Message.objects.all() 
     serializer_class = MessageSerializer
+
+    def get_queryset(self):
+        return Message.objects.filter(parent_message__isnull=True)\
+            .select_related('sender', 'receiver', 'parent_message')\
+            .prefetch_related('replies')
+
 
 
 @api_view(['DELETE'])
