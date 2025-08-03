@@ -1,5 +1,4 @@
 from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.decorators import login_required
 from django.db import models
 import uuid
 
@@ -15,13 +14,17 @@ class User(AbstractUser):
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.user_id})"
 
-
+class MessageManager(models.Manager):
+    def unread_for_user(self, user):
+        return self.filter(receiver=user, read=False).only('id', 'sender', 'content', 'timestamp')
+      
 class Message(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     edited = models.BooleanField(default=False)
+    read = models.BooleanField(default=False)
     
     parent_message = models.ForeignKey(
         'self',
@@ -30,6 +33,9 @@ class Message(models.Model):
         on_delete=models.CASCADE,
         related_name="replies"
     )
+    
+    objects = models.Manager()
+    unread = MessageManager()
 
     def __str__(self):
         return f"From {self.sender} to {self.receiver} at {self.timestamp}"
