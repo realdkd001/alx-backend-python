@@ -2,20 +2,26 @@ from .models import Message, User
 from rest_framework import serializers
 
 
-class MessageSerializer(serializers.ModelSerializer):
-    replies = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Message
-        fields = ['id', 'sender', 'receiver', 'content', 'timestamp', 'edited', 'parent_message', 'replies']
-
-    def get_replies(self, obj):
-        # Recursive serialization
-        if obj.replies.exists():
-            return MessageSerializer(obj.replies.all(), many=True).data
-        return []
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = "__all__"
+        fields = ['user_id', 'username', 'first_name', 'last_name']
+
+
+class MessageSerializer(serializers.ModelSerializer):
+    replies = serializers.SerializerMethodField()
+    sender = UserSerializer(read_only=True)
+    receiver = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())  # <-- writeable
+
+    class Meta:
+        model = Message
+        fields = [
+            'id', 'sender', 'receiver', 'content', 'timestamp',
+            'edited', 'parent_message', 'replies'
+        ]
+
+    def get_replies(self, obj):
+        children = obj.replies.all()
+        if children.exists():
+            return MessageSerializer(children, many=True, context=self.context).data
+        return []

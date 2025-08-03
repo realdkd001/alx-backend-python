@@ -1,12 +1,8 @@
-from rest_framework.routers import DefaultRouter
-from .views import MessageViewSet, delete_user
 from django.urls import path
+from .views import list_messages, create_message, delete_user
 
-router = DefaultRouter()
-router.register(r'messages', MessageViewSet)
-
-urlpatterns = router.urls
-
-urlpatterns += [
-    path('delete_user/', delete_user, name='delete_user'), 
+urlpatterns = [
+    path('messages/', list_messages, name='list_messages'),
+    path('messages/create/', create_message, name='create_message'),
+    path('delete_user/', delete_user, name='delete_user'),
 ]

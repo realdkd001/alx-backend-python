@@ -7,15 +7,24 @@ from .serializers import MessageSerializer
 from .models import Message
 
 
-class MessageViewSet(viewsets.ModelViewSet):
-    queryset = Message.objects.all() 
-    serializer_class = MessageSerializer
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def list_messages(request):
+    messages = Message.objects.filter(parent_message__isnull=True)\
+        .select_related('sender', 'receiver', 'parent_message')\
+        .prefetch_related('replies')
+    serializer = MessageSerializer(messages, many=True)
+    return Response(serializer.data)
 
-    def get_queryset(self):
-        return Message.objects.filter(parent_message__isnull=True)\
-            .select_related('sender', 'receiver', 'parent_message')\
-            .prefetch_related('replies')
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_message(request):
+    serializer = MessageSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save(sender=request.user)  # sender is auto-set
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['DELETE'])
