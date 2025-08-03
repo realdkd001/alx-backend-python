@@ -19,7 +19,7 @@ def list_messages(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def unread_messages(request):
-    messages = Message.unread.for_user(request.user).only(
+    messages = Message.unread.unread_for_user(request.user).only(
         'id', 'sender', 'receiver', 'content', 'timestamp', 'read'
     )
     serializer = MessageSerializer(messages, many=True, context={'request': request})
