@@ -9,6 +9,7 @@ from .models import Message
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
+@cache_page(60)
 def list_messages(request):
     messages = Message.objects.filter(parent_message__isnull=True)\
         .select_related('sender', 'receiver', 'parent_message')\
