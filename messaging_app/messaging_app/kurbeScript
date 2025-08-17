@@ -1,6 +1,5 @@
 #!/bin/bash
 # kurbeScript - Start Kubernetes cluster locally and verify
-# Author: Your Name
 
 set -e  # Exit immediately on error
 
