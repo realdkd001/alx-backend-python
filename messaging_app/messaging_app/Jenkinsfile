@@ -1,56 +1,64 @@
+
 pipeline {
-    agent {
-        docker { image 'python:3.11-slim' }
-    }
+    agent any
     stages {
-        stage('Checkout Code') {
+        stage("Pull code from GitHub") {
             steps {
-                git branch: 'main', url: 'https://github.com/Biyuktul/alx-backend-python.git'
+                git branch: 'main',
+                    credentialsId: 'GitHub_Cred',
+                    url: 'https://github.com/realdkd001/alx-backend-python'
             }
         }
-        stage('Install Dependencies') {
+        stage("install dependencies") {
             steps {
                 dir('messaging_app') {
                     sh '''
+                        rm -rf venv
                         python3 -m venv venv
-                        . venv/bin/activate
-                        pip install --upgrade pip
-                        pip install pytest
-                        pip install -r requirements.txt
+                        bash -c "source venv/bin/activate"
+                        venv/bin/pip3 install --upgrade pip
+                        bash -c "apt install python3-dev default-libmysqlclient-dev build-essential pkg-config -y"
+                        venv/bin/pip3 install -r messaging_app/requirements.txt
                     '''
                 }
             }
         }
-        stage('Test') {
+        stage("Test") {
             steps {
-                dir('messaging_app') {
+                dir("messaging_app") {
                     sh '''
-                        . venv/bin/activate
-                        pytest --junitxml=report.xml
+                        bash -c "source venv/bin/activate"
+                        venv/bin/pytest
                     '''
                 }
             }
-            post {
-                always {
-                    junit 'messaging_app/report.xml'
-                }
-            }
         }
-        stage('Build Docker Image') {
+        stage("Build image") {
             steps {
-                script {
-                    docker.build('messaging_app_image', '-f messaging_app/Dockerfile messaging_app')
-                }
-            }
-        }
-        stage('Push To Docker Hub') {
-            steps {
-                script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
-                        docker.image('messaging_app_image:latest').push()
-                        echo "Pushing ..."
+                dir("messaging_app/messaging_app") {
+                    script {
+                        docker.build("realdkd001/message_app:${env.BUILD_NUMBER}")
                     }
                 }
+            }
+        }
+        stage("Push image to dockerhub") {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub_cred', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+                    sh "echo ${PASSWORD} | docker login -u ${USERNAME} --password-stdin"
+                    sh "docker push realdkd001/message_app:${env.BUILD_NUMBER}"
+                }
+            }
+        }        
+    }
+    
+    post {
+        always {
+            dir("messaging_app") {
+                sh '''
+                    bash -c "source venv/bin/activate"
+                    venv/bin/pytest --cov
+                '''
             }
         }
     }
